@@ -9,6 +9,12 @@ struct Vertex {
 	float z;
 };
 
+struct Face {
+	int f1;
+	int f2;
+	int f3;
+};
+
 class Model
 {
 private:
@@ -16,7 +22,7 @@ private:
 	Vertex *vertexList;
 
 	int faceCount;
-	int **faceList;
+	Face *faceList;
 
 	void AddVertex(const vector<float> &vert);
 public:
@@ -24,5 +30,6 @@ public:
 	~Model(void);
 
 	void Load(const string &filename);
+	void OGLDraw(void);
 };
 

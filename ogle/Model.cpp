@@ -5,6 +5,11 @@
 #include <cstring>
 #include <sstream>
 #include <vector>
+#include <cmath>
+
+#include <Windows.h>
+#include <gl/GL.h>
+#include <gl/glut.h>
 using namespace std;
 
 Model::Model(void)
@@ -21,39 +26,60 @@ Model::~Model(void)
 	delete[] vertexList;
 	vertexList = NULL;
 	vertexCount = 0;
+
+	delete[] faceList;
+	faceList = NULL;
+	faceCount = 0;
 }
 
-//static void processFaceLine(const string &line, vector<int> &face)
-//{
-//	face.clear();
-//	int last_pos = 1;
-//	int new_pos = 0;
-//	string substr;
-//
-//	while((new_pos = line.find_first_of(' ', last_pos+1)) != string::npos) {
-//		substr = line.substr(last_pos, new_pos - last_pos);
-//		face.push_back(atoi(substr.c_str()));
-//		last_pos = new_pos;
-//	}
-//	substr = line.substr(last_pos);
-//	face.push_back(atoi(substr.c_str()));
-//}
+Vertex normalize(Vertex vector)
+{
+	Vertex result;
+	float mag = vector.x*vector.x + vector.y*vector.y + vector.z*vector.z;
+	mag = (float)sqrt((double)mag);
+	result.x = vector.x / mag;
+	result.y = vector.y / mag;
+	result.z = vector.z / mag;
+	return result;
+}
 
-//static void processVertexLine(const string &line, vector<float> &vert)
-//{
-//	vert.clear();
-//	int last_pos = 1;
-//	int new_pos = 0;
-//	string substr;
-//
-//	while((new_pos = line.find_first_of(' ', last_pos+1)) != string::npos) {
-//		substr = line.substr(last_pos, new_pos - last_pos);
-//		vert.push_back(atof(substr.c_str()));
-//		last_pos = new_pos;
-//	}
-//	substr = line.substr(last_pos);
-//	vert.push_back(atof(substr.c_str()));
-//}
+Vertex cross(const Vertex &vector1, const Vertex &vector2)
+{
+	Vertex result;
+	result.x = (vector1.y*vector2.z) - (vector1.z*vector2.y);
+	result.y = (vector1.x*vector2.z) - (vector1.z*vector2.x);
+	result.z = (vector1.x*vector2.y) - (vector1.y*vector2.x);
+	return result;
+}
+
+Vertex get_normal(Vertex a, Vertex b, Vertex c)
+{
+	Vertex u;
+	u.x = b.x - a.x;
+	u.y = b.y - a.y;
+	u.z = b.z - a.z;
+
+	Vertex v;
+	v.x = c.x - a.x;
+	v.y = c.y - a.y;
+	v.z = c.z - a.z;
+
+	return normalize(cross(u, v));
+}
+
+void Model::OGLDraw(void)
+{
+	for(int face = 0; face < faceCount; face ++) {
+		glBegin(GL_TRIANGLES);
+		Vertex normal = get_normal(vertexList[faceList[face].f1], vertexList[faceList[face].f2], vertexList[faceList[face].f3]);
+		glNormal3f(normal.x, normal.y, normal.z);
+		glVertex3f(vertexList[faceList[face].f1].x, vertexList[faceList[face].f1].y, vertexList[faceList[face].f1].z);
+		glVertex3f(vertexList[faceList[face].f2].x, vertexList[faceList[face].f2].y, vertexList[faceList[face].f2].z);
+		glVertex3f(vertexList[faceList[face].f3].x, vertexList[faceList[face].f3].y, vertexList[faceList[face].f3].z);
+		glVertex3f(vertexList[faceList[face].f1].x, vertexList[faceList[face].f1].y, vertexList[faceList[face].f1].z);
+		glEnd();
+	}
+}
 
 void Model::Load(const string &filename)
 {
@@ -68,6 +94,7 @@ void Model::Load(const string &filename)
 	int faceIndex = 0;
 
 	file.open(filename, ios::in);
+	// Run through file once to figure out how many verts and faces exist
 	while(file) {
 		getline(file, line);
 		if (line.length() > 0) {
@@ -81,23 +108,37 @@ void Model::Load(const string &filename)
 			};
 		}
 	}
-	file.close();
-
+	// clear and rewind file stream
+	file.clear();
+	file.seekg(0);
+	
 	cout << "   Attempting to load " << vertexCount << " vertices." << endl;
 	cout << "   Attempting to load " << faceCount << " faces." << endl;
+
+	// Allocate memory for vertices and faces
 	vertexList = new Vertex[vertexCount];
+	faceList = new Face[faceCount];
+
 	Vertex temp;
+	Face tempFace;
 	istringstream streamLine;
 
-	file.open(filename, ios::in);
+	// Run through file again to load vertex and face data
 	while(file) {
 		getline(file, line);
 		if (line.length() > 0) {
+			streamLine = istringstream(&line[1]);
 			if (line[0] == 'v') {
-				streamLine = istringstream(line[1]);
 				streamLine >> temp.x >> temp.y >> temp.z;
 				vertexList[vertexIndex] = temp;
 				vertexIndex ++;
+			}else if (line[0] == 'f') {
+				streamLine >> tempFace.f1 >> tempFace.f2 >> tempFace.f3;
+				tempFace.f1 --;
+				tempFace.f2 --;
+				tempFace.f3 --;
+				faceList[faceIndex] = tempFace;
+				faceIndex ++;
 			}
 		}
 	}
