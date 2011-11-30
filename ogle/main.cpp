@@ -15,7 +15,7 @@ static void render(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef(0.0f, 0.0f, -6.0f);
+	glTranslatef(0.0f, -5.0f, -20.0f);
 	glRotatef(rot, 0.0f, 1.0f, 0.0f);
 	for (int i = 0; i < modelsCount; i++) {
 		glPushMatrix();
@@ -59,7 +59,8 @@ int main(int argc, char **argv)
 	glutIdleFunc(&idle);
 	glutReshapeFunc(&reshape);
 
-	modelsList[0].Load("../bunny.obj");
+	//modelsList[0].Load("../bunny.obj");
+	modelsList[0].Load("../dragon.obj");
 	//modelsList[0].Load("../teapot2.obj");
 
 	glEnable(GL_DEPTH_TEST);
