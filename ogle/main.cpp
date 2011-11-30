@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <gl/GL.h>
 #include <gl/glut.h>
+#include "Model.h"
 
 static void render(void)
 {
@@ -18,7 +19,7 @@ static void idle(void)
 int main(int argc, char **argv)
 {
 	HWND hWnd = GetConsoleWindow();
-	ShowWindow(hWnd, SW_HIDE);
+	//ShowWindow(hWnd, SW_HIDE);
 
 	int width = 800;
 	int height = 600;
@@ -29,6 +30,9 @@ int main(int argc, char **argv)
 	glutCreateWindow("Ogle");
 	glutDisplayFunc(&render);
 	glutIdleFunc(&idle);
+
+	Model m;
+	m.Load("../teapot.obj");
 
 	glutMainLoop();
 	return 0;
