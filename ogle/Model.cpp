@@ -86,6 +86,8 @@ void Model::Load(const string &filename)
 	cout << "Loading " << filename << endl;
 	fstream file;
 	string line;
+	istringstream streamLine;
+	string buf;
 
 	vertexCount = 0;
 	faceCount = 0;
@@ -93,18 +95,21 @@ void Model::Load(const string &filename)
 	int vertexIndex = 0;
 	int faceIndex = 0;
 
+	Vertex temp;
+	Face tempFace;
+
 	file.open(filename, ios::in);
 	// Run through file once to figure out how many verts and faces exist
 	while(file) {
 		getline(file, line);
 		if (line.length() > 0) {
-			switch (line[0]) {
-			case 'v':
+			streamLine = istringstream(line);
+			streamLine >> buf;
+			if (buf == "vt") {
+			} else if (buf == "v") {
 				vertexCount ++;
-				break;
-			case 'f':
+			} else if (buf == "f") {
 				faceCount ++;
-				break;
 			};
 		}
 	}
@@ -119,20 +124,17 @@ void Model::Load(const string &filename)
 	vertexList = new Vertex[vertexCount];
 	faceList = new Face[faceCount];
 
-	Vertex temp;
-	Face tempFace;
-	istringstream streamLine;
-
 	// Run through file again to load vertex and face data
 	while(file) {
 		getline(file, line);
 		if (line.length() > 0) {
-			streamLine = istringstream(&line[1]);
-			if (line[0] == 'v') {
+			streamLine = istringstream(line);
+			streamLine >> buf;
+			if (buf == "v") {
 				streamLine >> temp.x >> temp.y >> temp.z;
 				vertexList[vertexIndex] = temp;
 				vertexIndex ++;
-			}else if (line[0] == 'f') {
+			}else if (buf == "f") {
 				streamLine >> tempFace.f1 >> tempFace.f2 >> tempFace.f3;
 				tempFace.f1 --;
 				tempFace.f2 --;
