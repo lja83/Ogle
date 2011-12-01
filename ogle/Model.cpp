@@ -32,53 +32,24 @@ Model::~Model(void)
 	faceCount = 0;
 }
 
-Vertex normalize(Vertex vector)
+const Vector3f *Model::GetVertexList(void)
 {
-	Vertex result;
-	float mag = vector.x*vector.x + vector.y*vector.y + vector.z*vector.z;
-	mag = (float)sqrt((double)mag);
-	result.x = vector.x / mag;
-	result.y = vector.y / mag;
-	result.z = vector.z / mag;
-	return result;
+	return vertexList;
 }
 
-Vertex cross(const Vertex &vector1, const Vertex &vector2)
+const Face *Model::GetFaceList(void)
 {
-	Vertex result;
-	result.x = (vector1.y*vector2.z) - (vector1.z*vector2.y);
-	result.y = (vector1.x*vector2.z) - (vector1.z*vector2.x);
-	result.z = (vector1.x*vector2.y) - (vector1.y*vector2.x);
-	return result;
+	return faceList;
 }
 
-Vertex get_normal(Vertex a, Vertex b, Vertex c)
+int Model::GetFaceCount(void)
 {
-	Vertex u;
-	u.x = b.x - a.x;
-	u.y = b.y - a.y;
-	u.z = b.z - a.z;
-
-	Vertex v;
-	v.x = c.x - a.x;
-	v.y = c.y - a.y;
-	v.z = c.z - a.z;
-
-	return normalize(cross(u, v));
+	return faceCount;
 }
 
-void Model::OGLDraw(void)
+int Model::GetVertexCount(void)
 {
-	for(int face = 0; face < faceCount; face ++) {
-		glBegin(GL_TRIANGLES);
-		Vertex normal = get_normal(vertexList[faceList[face].f1], vertexList[faceList[face].f2], vertexList[faceList[face].f3]);
-		glNormal3f(normal.x, normal.y, normal.z);
-		glVertex3f(vertexList[faceList[face].f1].x, vertexList[faceList[face].f1].y, vertexList[faceList[face].f1].z);
-		glVertex3f(vertexList[faceList[face].f2].x, vertexList[faceList[face].f2].y, vertexList[faceList[face].f2].z);
-		glVertex3f(vertexList[faceList[face].f3].x, vertexList[faceList[face].f3].y, vertexList[faceList[face].f3].z);
-		glVertex3f(vertexList[faceList[face].f1].x, vertexList[faceList[face].f1].y, vertexList[faceList[face].f1].z);
-		glEnd();
-	}
+	return vertexCount;
 }
 
 void Model::Load(const string &filename)
@@ -95,7 +66,7 @@ void Model::Load(const string &filename)
 	int vertexIndex = 0;
 	int faceIndex = 0;
 
-	Vertex temp;
+	Vector3f temp;
 	Face tempFace;
 
 	file.open(filename, ios::in);
@@ -121,7 +92,7 @@ void Model::Load(const string &filename)
 	cout << "   Attempting to load " << faceCount << " faces." << endl;
 
 	// Allocate memory for vertices and faces
-	vertexList = new Vertex[vertexCount];
+	vertexList = new Vector3f[vertexCount];
 	faceList = new Face[faceCount];
 
 	// Run through file again to load vertex and face data
@@ -135,10 +106,10 @@ void Model::Load(const string &filename)
 				vertexList[vertexIndex] = temp;
 				vertexIndex ++;
 			}else if (buf == "f") {
-				streamLine >> tempFace.f1 >> tempFace.f2 >> tempFace.f3;
-				tempFace.f1 --;
-				tempFace.f2 --;
-				tempFace.f3 --;
+				streamLine >> tempFace.vertIndex0 >> tempFace.vertIndex1 >> tempFace.vertIndex2;
+				tempFace.vertIndex0 --;
+				tempFace.vertIndex1 --;
+				tempFace.vertIndex2 --;
 				faceList[faceIndex] = tempFace;
 				faceIndex ++;
 			}
@@ -148,4 +119,12 @@ void Model::Load(const string &filename)
 
 	cout << "   Loaded " << vertexIndex << " vertices." << endl;
 	cout << "   Loaded " << faceIndex << " faces." << endl;
+
+	// Calculate normals
+	cout << "Calculating " << faceIndex << " normals." << endl;
+	for (int i = 0; i < faceCount; i ++) {
+		temp = get_normal(vertexList[faceList[i].vertIndex0], vertexList[faceList[i].vertIndex1], vertexList[faceList[i].vertIndex2]);
+		faceList[i].normal = temp;
+	}
+	cout << "Done" << endl;
 }

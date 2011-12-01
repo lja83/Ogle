@@ -1,35 +1,32 @@
 #pragma once
 #include <string>
-#include <vector>
+#include "OgleMath.h"
 using namespace std;
 
-struct Vertex {
-	float x;
-	float y;
-	float z;
-};
-
 struct Face {
-	int f1;
-	int f2;
-	int f3;
+	int vertIndex0;
+	int vertIndex1;
+	int vertIndex2;
+	Vector3f normal;
 };
 
 class Model
 {
 private:
 	int vertexCount;
-	Vertex *vertexList;
+	Vector3f *vertexList;
 
 	int faceCount;
 	Face *faceList;
-
-	void AddVertex(const vector<float> &vert);
 public:
 	Model(void);
 	~Model(void);
 
+	int GetFaceCount(void);
+	int GetVertexCount(void);
+	const Vector3f *GetVertexList(void);
+	const Face *GetFaceList(void);
+
 	void Load(const string &filename);
-	void OGLDraw(void);
 };
 
