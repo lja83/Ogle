@@ -121,10 +121,10 @@ void Model::Load(const string &filename)
 	cout << "   Loaded " << faceIndex << " faces." << endl;
 
 	// Calculate normals
-	cout << "Calculating " << faceIndex << " normals." << endl;
+	cout << "   Calculating " << faceIndex << " normals." << endl;
 	for (int i = 0; i < faceCount; i ++) {
 		temp = get_normal(vertexList[faceList[i].vertIndex0], vertexList[faceList[i].vertIndex1], vertexList[faceList[i].vertIndex2]);
 		faceList[i].normal = temp;
 	}
-	cout << "Done" << endl;
+	cout << "   Done" << endl;
 }

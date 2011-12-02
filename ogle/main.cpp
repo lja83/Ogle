@@ -32,7 +32,6 @@ static void render(void)
 			glVertex3f(verts[faces[face].vertIndex0].x, verts[faces[face].vertIndex0].y, verts[faces[face].vertIndex0].z);
 			glVertex3f(verts[faces[face].vertIndex1].x, verts[faces[face].vertIndex1].y, verts[faces[face].vertIndex1].z);
 			glVertex3f(verts[faces[face].vertIndex2].x, verts[faces[face].vertIndex2].y, verts[faces[face].vertIndex2].z);
-			glVertex3f(verts[faces[face].vertIndex0].x, verts[faces[face].vertIndex0].y, verts[faces[face].vertIndex0].z);
 			glEnd();
 		}
 		glPopMatrix();
