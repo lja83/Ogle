@@ -10,6 +10,28 @@ int modelsCount = 0;
 Model *modelsList;
 float rot = 0;
 
+static void draw_normal(Vector3f vertex, Vector3f normal)
+{
+	float normalLen = 0.1;
+
+	normal.x *= normalLen;
+	normal.y *= normalLen;
+	normal.z *= normalLen;
+
+	normal.x += vertex.x;
+	normal.y += vertex.y;
+	normal.z += vertex.z;
+
+	glDisable(GL_LIGHTING);
+	glBegin(GL_LINES);
+
+	glVertex3f(vertex.x, vertex.y, vertex.z);
+	glVertex3f(normal.x, normal.y, normal.z);
+
+	glEnd();
+	glEnable(GL_LIGHTING);
+}
+
 static void render(void)
 {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -20,29 +42,40 @@ static void render(void)
 	glRotatef(rot, 0.0f, 1.0f, 0.0f);
 
 	const Vector3f *verts = NULL;
+	const Vector3f *vertNormals = NULL;
 	const Face *faces = NULL;
+	int vertIndex;
+
+	bool DRAW_NORMALS = FALSE;
 
 	for (int i = 0; i < modelsCount; i++) {
 		glPushMatrix();
 		verts = modelsList[i].GetVertexList();
+		vertNormals = modelsList[i].GetVertexNormalList();
 		faces = modelsList[i].GetFaceList();
 		for(int face = 0; face < modelsList[i].GetFaceCount(); face ++) {
 			glBegin(GL_TRIANGLES);
-			glNormal3f(faces[face].normal.x, faces[face].normal.y, faces[face].normal.z);
-			glVertex3f(verts[faces[face].vertIndex0].x, verts[faces[face].vertIndex0].y, verts[faces[face].vertIndex0].z);
-			glVertex3f(verts[faces[face].vertIndex1].x, verts[faces[face].vertIndex1].y, verts[faces[face].vertIndex1].z);
-			glVertex3f(verts[faces[face].vertIndex2].x, verts[faces[face].vertIndex2].y, verts[faces[face].vertIndex2].z);
+			for(int j = 0; j < 3; j ++) {
+				vertIndex = faces[face].verts[j];
+				glNormal3f(vertNormals[vertIndex].x, vertNormals[vertIndex].y, vertNormals[vertIndex].z);
+				glVertex3f(verts[vertIndex].x, verts[vertIndex].y, verts[vertIndex].z);
+			}
 			glEnd();
+			if (DRAW_NORMALS) {
+				for(int j = 0; j < 3; j ++) {
+					draw_normal(verts[faces[face].verts[j]], vertNormals[faces[face].verts[j]]);
+				}
+			}
 		}
 		glPopMatrix();
 	}
-
 	glutSwapBuffers();
 }
 
 static void idle(void)
 {
 	rot += 1;
+	rot = fmod(rot, 360);
 	glutPostRedisplay();
 }
 
@@ -74,7 +107,7 @@ int main(int argc, char **argv)
 
 	modelsCount = 2;
 	modelsList = new Model[modelsCount];
-	modelsList[0].Load("../bunny.obj");
+	//modelsList[0].Load("../bunny.obj");
 	modelsList[1].Load("../dragon.obj");
 	//modelsList[1].Load("../teapot2.obj");
 

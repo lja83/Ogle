@@ -4,10 +4,7 @@
 using namespace std;
 
 struct Face {
-	int vertIndex0;
-	int vertIndex1;
-	int vertIndex2;
-	Vector3f normal;
+	int verts[3];
 };
 
 class Model
@@ -15,6 +12,7 @@ class Model
 private:
 	int vertexCount;
 	Vector3f *vertexList;
+	Vector3f *vertexNormalList;
 
 	int faceCount;
 	Face *faceList;
@@ -25,6 +23,7 @@ public:
 	int GetFaceCount(void);
 	int GetVertexCount(void);
 	const Vector3f *GetVertexList(void);
+	const Vector3f *GetVertexNormalList(void);
 	const Face *GetFaceList(void);
 
 	void Load(const string &filename);

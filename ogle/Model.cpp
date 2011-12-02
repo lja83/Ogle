@@ -2,20 +2,15 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <cstring>
 #include <sstream>
-#include <vector>
-#include <cmath>
-
-#include <Windows.h>
-#include <gl/GL.h>
-#include <gl/glut.h>
 using namespace std;
 
 Model::Model(void)
 {
 	vertexCount = 0;
 	vertexList = NULL;
+
+	vertexNormalList = NULL;
 
 	faceCount = 0;
 	faceList = NULL;
@@ -27,6 +22,9 @@ Model::~Model(void)
 	vertexList = NULL;
 	vertexCount = 0;
 
+	delete[] vertexNormalList;
+	vertexNormalList = NULL;
+
 	delete[] faceList;
 	faceList = NULL;
 	faceCount = 0;
@@ -35,6 +33,11 @@ Model::~Model(void)
 const Vector3f *Model::GetVertexList(void)
 {
 	return vertexList;
+}
+
+const Vector3f *Model::GetVertexNormalList(void)
+{
+	return vertexNormalList;
 }
 
 const Face *Model::GetFaceList(void)
@@ -93,6 +96,7 @@ void Model::Load(const string &filename)
 
 	// Allocate memory for vertices and faces
 	vertexList = new Vector3f[vertexCount];
+	vertexNormalList = new Vector3f[vertexCount];
 	faceList = new Face[faceCount];
 
 	// Run through file again to load vertex and face data
@@ -106,10 +110,10 @@ void Model::Load(const string &filename)
 				vertexList[vertexIndex] = temp;
 				vertexIndex ++;
 			}else if (buf == "f") {
-				streamLine >> tempFace.vertIndex0 >> tempFace.vertIndex1 >> tempFace.vertIndex2;
-				tempFace.vertIndex0 --;
-				tempFace.vertIndex1 --;
-				tempFace.vertIndex2 --;
+				streamLine >> tempFace.verts[0] >> tempFace.verts[1] >> tempFace.verts[2];
+				tempFace.verts[0] --;
+				tempFace.verts[1] --;
+				tempFace.verts[2] --;
 				faceList[faceIndex] = tempFace;
 				faceIndex ++;
 			}
@@ -121,10 +125,32 @@ void Model::Load(const string &filename)
 	cout << "   Loaded " << faceIndex << " faces." << endl;
 
 	// Calculate normals
+	temp.x = 0;
+	temp.y = 0;
+	temp.z = 0;
+	for (int i = 0; i < vertexCount; i ++) {
+		vertexNormalList[i] = temp;
+	}
+
+	int vertIndex[3];
 	cout << "   Calculating " << faceIndex << " normals." << endl;
+	// For each vertex on each face, calculate the vertex's normal based on the new face.
+	// If a previous normal has been calculated, average this one with the old one without normalizing.
 	for (int i = 0; i < faceCount; i ++) {
-		temp = get_normal(vertexList[faceList[i].vertIndex0], vertexList[faceList[i].vertIndex1], vertexList[faceList[i].vertIndex2]);
-		faceList[i].normal = temp;
+		vertIndex[0] = faceList[i].verts[0];
+		vertIndex[1] = faceList[i].verts[1];
+		vertIndex[2] = faceList[i].verts[2];
+		temp = get_normal(vertexList[vertIndex[0]], vertexList[vertIndex[1]], vertexList[vertIndex[2]]);
+		temp = normalize(temp);
+		for (int j = 0; j < 3; j++) {
+			vertexNormalList[vertIndex[j]].x = (temp.x + vertexNormalList[vertIndex[j]].x);
+			vertexNormalList[vertIndex[j]].y = (temp.y + vertexNormalList[vertIndex[j]].y);
+			vertexNormalList[vertIndex[j]].z = (temp.z + vertexNormalList[vertIndex[j]].z);
+		}
+	}
+	// normalize all vertex normals
+	for (int i = 0; i < vertexCount; i ++) {
+		vertexNormalList[i] = normalize(vertexNormalList[i]);
 	}
 	cout << "   Done" << endl;
 }

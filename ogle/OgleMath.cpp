@@ -2,6 +2,12 @@
 #include <cmath>
 #include <iostream>
 
+float magnitude(Vector3f vector)
+{
+	float mag = vector.x*vector.x + vector.y*vector.y + vector.z*vector.z;
+	return (float)sqrt((double)mag);
+}
+
 Vector3f normalize(Vector3f vector)
 {
 	Vector3f result;
@@ -34,5 +40,5 @@ Vector3f get_normal(Vector3f a, Vector3f b, Vector3f c)
 	v.y = c.y - a.y;
 	v.z = c.z - a.z;
 
-	return normalize(cross(u, v));
+	return cross(u, v);
 }
