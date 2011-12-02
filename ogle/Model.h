@@ -13,6 +13,7 @@ private:
 	int vertexCount;
 	Vector3f *vertexList;
 	Vector3f *vertexNormalList;
+	Matrix transform;
 
 	int faceCount;
 	Face *faceList;

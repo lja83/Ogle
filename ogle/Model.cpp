@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include "OgleMath.h"
 using namespace std;
 
 Model::Model(void)
@@ -14,6 +15,8 @@ Model::Model(void)
 
 	faceCount = 0;
 	faceList = NULL;
+
+	setIdentity(transform);
 }
 
 Model::~Model(void)
