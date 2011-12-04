@@ -38,6 +38,8 @@ static void render(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	glTranslatef(0.0f, -5.0f, -20.0f);
+	glRotatef(rot, 0.0f, 1.0f, 0.0f);
 
 	const Vector3f *verts = NULL;
 	const Vector3f *vertNormals = NULL;
@@ -49,7 +51,7 @@ static void render(void)
 	for (int i = 0; i < modelsCount; i++) {
 		glPushMatrix();
 		// Set model's matrix
-		glMultMatrixf(modelsList[i].transform);
+		//glMultMatrixf(modelsList[i].transform);
 		verts = modelsList[i].GetVertexList();
 		vertNormals = modelsList[i].GetVertexNormalList();
 		faces = modelsList[i].GetFaceList();

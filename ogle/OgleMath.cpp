@@ -8,8 +8,8 @@ float magnitude(Vector3f vector)
 	return (float)sqrt((double)mag);
 }
 
-void setIdentity(Matrix mat) {
-	memcpy((void*)mat, (void*)identityMatrix, sizeof(Matrix));
+void setIdentity(float *mat) {
+	memcpy((void*)mat, (void*)identityMatrix, sizeof(float)*16);
 }
 
 float dotf(float *a, float *b, int order)
@@ -21,7 +21,7 @@ float dotf(float *a, float *b, int order)
 	return total;
 }
 
-void multMatrix(Matrix m1, Matrix m2, Matrix ret)
+void multMatrix(const float *m1, const float *m2, float *ret)
 {
 	float tempCol[4];
 	float tempRow[4];

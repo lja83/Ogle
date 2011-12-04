@@ -13,7 +13,7 @@ private:
 	int vertexCount;
 	Vector3f *vertexList;
 	Vector3f *vertexNormalList;
-	Matrix transform;
+	float *transform;
 
 	int faceCount;
 	Face *faceList;
@@ -26,6 +26,7 @@ public:
 	const Vector3f *GetVertexList(void);
 	const Vector3f *GetVertexNormalList(void);
 	const Face *GetFaceList(void);
+	const float *GetTransformMatrix(void);
 
 	void Load(const string &filename);
 };

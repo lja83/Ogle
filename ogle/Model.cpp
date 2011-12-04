@@ -16,7 +16,7 @@ Model::Model(void)
 	faceCount = 0;
 	faceList = NULL;
 
-	setIdentity(transform);
+	//setIdentity(transform);
 }
 
 Model::~Model(void)
