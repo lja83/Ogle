@@ -49,7 +49,7 @@ static void render(void)
 	const Face *faces = NULL;
 	int vertIndex;
 
-	bool DRAW_NORMALS = FALSE;
+	bool DRAW_NORMALS = TRUE;
 
 	for (int i = 0; i < modelsCount; i++) {
 		glPushMatrix();
@@ -66,10 +66,10 @@ static void render(void)
 				glVertex3f(verts[vertIndex].x, verts[vertIndex].y, verts[vertIndex].z);
 			}
 			glEnd();
-			if (DRAW_NORMALS) {
-				for(int j = 0; j < 3; j ++) {
-					draw_normal(verts[faces[face].verts[j]], vertNormals[faces[face].verts[j]]);
-				}
+		}
+		if (DRAW_NORMALS) {
+			for(int j = 0; j < modelsList[i].GetVertexCount(); j++) {
+				draw_normal(verts[j], vertNormals[j]);
 			}
 		}
 		glPopMatrix();
