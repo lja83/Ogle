@@ -38,8 +38,11 @@ static void render(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef(0.0f, -5.0f, -20.0f);
-	glRotatef(rot, 0.0f, 1.0f, 0.0f);
+	//glTranslatef(0.0f, 0.0f, -20.0f);
+	//glRotatef(rot, 1.0f, 0.0f, 0.0f);
+
+	//GLfloat light_pos[4] = {0, 0, -1, 0};
+	//glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 
 	const Vector3f *verts = NULL;
 	const Vector3f *vertNormals = NULL;
@@ -51,7 +54,7 @@ static void render(void)
 	for (int i = 0; i < modelsCount; i++) {
 		glPushMatrix();
 		// Set model's matrix
-		//glMultMatrixf(modelsList[i].transform);
+		glMultMatrixf(modelsList[i].transform);
 		verts = modelsList[i].GetVertexList();
 		vertNormals = modelsList[i].GetVertexNormalList();
 		faces = modelsList[i].GetFaceList();
@@ -78,6 +81,10 @@ static void idle(void)
 {
 	rot += 1;
 	rot = fmod(rot, 360);
+	float thisRot = rot * (3.1415926 / 180.0f);
+	//modelsList[1].SetRotation3f(0.0f, thisRot, 0.0f);
+	modelsList[1].SetRotation3f(thisRot, 0.0f, 0.0f);
+	cout << rot << endl;
 	glutPostRedisplay();
 }
 
@@ -110,8 +117,12 @@ int main(int argc, char **argv)
 	modelsCount = 2;
 	modelsList = new Model[modelsCount];
 	//modelsList[0].Load("../bunny.obj");
-	modelsList[1].Load("../dragon.obj");
-	//modelsList[1].Load("../teapot2.obj");
+	modelsList[0].Load("../teapot2.obj");
+	modelsList[1].Load("../teapot2.obj");
+	//modelsList[1].Load("../dragon.obj");
+
+	modelsList[0].SetTranslation3f(-4.0f, 0.0f, -20.0f);
+	modelsList[1].SetTranslation3f(4.0f, 0.0f, -20.0f);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);

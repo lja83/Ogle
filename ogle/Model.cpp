@@ -16,7 +16,8 @@ Model::Model(void)
 	faceCount = 0;
 	faceList = NULL;
 
-	//setIdentity(transform);
+	transform = new float[16];
+	setIdentity(transform);
 }
 
 Model::~Model(void)
@@ -31,6 +32,11 @@ Model::~Model(void)
 	delete[] faceList;
 	faceList = NULL;
 	faceCount = 0;
+}
+
+void Model::SetTransform(const float new_transform[16])
+{
+	memcpy(transform, new_transform, (sizeof(float) * 16));
 }
 
 const Vector3f *Model::GetVertexList(void)
@@ -56,6 +62,52 @@ int Model::GetFaceCount(void)
 int Model::GetVertexCount(void)
 {
 	return vertexCount;
+}
+
+void Model::SetTranslation3f(float x, float y, float z)
+{
+	transform[12 + 0] = x;
+	transform[12 + 1] = y;
+	transform[12 + 2] = z;
+}
+
+void Model::SetRotation3f(float x, float y, float z)
+{
+	float tempMatrix[16];
+
+	float xRot[] = {
+		1, 0, 0, 0,
+		0, cos(x), sin(x), 0,
+		0, -sin(x), cos(x), 0,
+		0, 0, 0, 1
+	};
+
+	float yRot[] = {
+		cos(y), 0, -sin(y), 0,
+		0, 1, 0, 0,
+		sin(y), 0, cos(y), 0,
+		0, 0, 0, 1
+	};
+
+	float zRot[] = {
+		1, cos(z), sin(z), 0,
+		0, -sin(z), cos(z), 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	};
+
+	multMatrix(xRot, yRot, tempMatrix);
+	memcpy(transform, tempMatrix, (sizeof(float) * 12));
+
+	cout.precision(4);
+	for(int r = 0; r < 4; r++) {
+		for(int c = 0; c < 4; c++) {
+			cout << transform[(r*4) + c];
+			cout << ", ";
+		}
+		cout << endl;
+	}
+	cout << endl << endl;
 }
 
 void Model::Load(const string &filename)
