@@ -16,20 +16,22 @@ private:
 
 	int faceCount;
 	Face *faceList;
+
+	float *transform;
 public:
 	Model(void);
 	~Model(void);
 
-	int GetFaceCount(void);
-	int GetVertexCount(void);
-	const Vector3f *GetVertexList(void);
-	const Vector3f *GetVertexNormalList(void);
-	const Face *GetFaceList(void);
-	const float *GetTransformMatrix(void);
+	int GetFaceCount(void) { return faceCount; }
+	int GetVertexCount(void) { return vertexCount; };
+	const Vector3f *GetVertexList(void) { return vertexList; };
+	const Vector3f *GetVertexNormalList(void) { return vertexNormalList; };
+	const Face *GetFaceList(void) { return faceList; };
+	const float *GetTransform(void) { return transform; };
+
 	void SetTransform(const float new_transform[16]);
 	void SetTranslation3f(float x, float y, float z);
 	void SetRotation3f(float x, float y, float z);
-	float *transform;
 
 	void Load(const string &filename);
 };

@@ -54,7 +54,7 @@ static void render(void)
 	for (int i = 0; i < modelsCount; i++) {
 		glPushMatrix();
 		// Set model's matrix
-		glMultMatrixf(modelsList[i].transform);
+		glMultMatrixf(modelsList[i].GetTransform());
 		verts = modelsList[i].GetVertexList();
 		vertNormals = modelsList[i].GetVertexNormalList();
 		faces = modelsList[i].GetFaceList();

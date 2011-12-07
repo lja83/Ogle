@@ -39,31 +39,6 @@ void Model::SetTransform(const float new_transform[16])
 	memcpy(transform, new_transform, (sizeof(float) * 16));
 }
 
-const Vector3f *Model::GetVertexList(void)
-{
-	return vertexList;
-}
-
-const Vector3f *Model::GetVertexNormalList(void)
-{
-	return vertexNormalList;
-}
-
-const Face *Model::GetFaceList(void)
-{
-	return faceList;
-}
-
-int Model::GetFaceCount(void)
-{
-	return faceCount;
-}
-
-int Model::GetVertexCount(void)
-{
-	return vertexCount;
-}
-
 void Model::SetTranslation3f(float x, float y, float z)
 {
 	transform[12 + 0] = x;
