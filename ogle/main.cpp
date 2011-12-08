@@ -38,18 +38,19 @@ static void render(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	float light_pos[4] = {0, 0, 1, 0};
+	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+
 	//glTranslatef(0.0f, 0.0f, -20.0f);
 	//glRotatef(rot, 1.0f, 0.0f, 0.0f);
-
-	//GLfloat light_pos[4] = {0, 0, -1, 0};
-	//glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 
 	const Vector3f *verts = NULL;
 	const Vector3f *vertNormals = NULL;
 	const Face *faces = NULL;
 	int vertIndex;
 
-	bool DRAW_NORMALS = TRUE;
+	bool DRAW_NORMALS = FALSE;
 
 	for (int i = 0; i < modelsCount; i++) {
 		glPushMatrix();
@@ -62,7 +63,8 @@ static void render(void)
 			glBegin(GL_TRIANGLES);
 			for(int j = 0; j < 3; j ++) {
 				vertIndex = faces[face].verts[j];
-				glNormal3f(vertNormals[vertIndex].x, vertNormals[vertIndex].y, vertNormals[vertIndex].z);
+				//glNormal3f(vertNormals[vertIndex].x, vertNormals[vertIndex].y, vertNormals[vertIndex].z);
+				glNormal3f(faces[face].normal.x, faces[face].normal.y, faces[face].normal.z);
 				glVertex3f(verts[vertIndex].x, verts[vertIndex].y, verts[vertIndex].z);
 			}
 			glEnd();
@@ -84,7 +86,7 @@ static void idle(void)
 	float thisRot = rot * (3.1415926 / 180.0f);
 	//modelsList[1].SetRotation3f(0.0f, thisRot, 0.0f);
 	modelsList[1].SetRotation3f(thisRot, 0.0f, 0.0f);
-	cout << rot << endl;
+	//cout << rot << endl;
 	glutPostRedisplay();
 }
 
@@ -117,12 +119,13 @@ int main(int argc, char **argv)
 	modelsCount = 2;
 	modelsList = new Model[modelsCount];
 	//modelsList[0].Load("../bunny.obj");
-	modelsList[0].Load("../teapot2.obj");
+	//modelsList[0].Load("../teapot2.obj");
 	modelsList[1].Load("../teapot2.obj");
 	//modelsList[1].Load("../dragon.obj");
 
-	modelsList[0].SetTranslation3f(-4.0f, 0.0f, -20.0f);
-	modelsList[1].SetTranslation3f(4.0f, 0.0f, -20.0f);
+	//modelsList[0].SetTranslation3f(-4.0f, -2.0f, -20.0f);
+	//modelsList[1].SetTranslation3f(4.0f, -2.0f, -20.0f);
+	modelsList[1].SetTranslation3f(0.0f, 0.0f, -10.0f);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);

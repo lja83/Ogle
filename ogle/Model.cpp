@@ -74,15 +74,15 @@ void Model::SetRotation3f(float x, float y, float z)
 	multMatrix(xRot, yRot, tempMatrix);
 	memcpy(transform, tempMatrix, (sizeof(float) * 12));
 
-	cout.precision(4);
-	for(int r = 0; r < 4; r++) {
-		for(int c = 0; c < 4; c++) {
-			cout << transform[(r*4) + c];
-			cout << ", ";
-		}
-		cout << endl;
-	}
-	cout << endl << endl;
+	//cout.precision(4);
+	//for(int r = 0; r < 4; r++) {
+	//	for(int c = 0; c < 4; c++) {
+	//		cout << transform[(r*4) + c];
+	//		cout << ", ";
+	//	}
+	//	cout << endl;
+	//}
+	//cout << endl << endl;
 }
 
 void Model::Load(const string &filename)
@@ -172,6 +172,7 @@ void Model::Load(const string &filename)
 		vertIndex[2] = faceList[i].verts[2];
 		temp = get_normal(vertexList[vertIndex[0]], vertexList[vertIndex[1]], vertexList[vertIndex[2]]);
 		temp = normalize(temp);
+		faceList[i].normal = temp;
 		for (int j = 0; j < 3; j++) {
 			vertexNormalList[vertIndex[j]].x = (temp.x + vertexNormalList[vertIndex[j]].x);
 			vertexNormalList[vertIndex[j]].y = (temp.y + vertexNormalList[vertIndex[j]].y);

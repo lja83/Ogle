@@ -12,7 +12,7 @@ void setIdentity(float *mat) {
 	memcpy((void*)mat, (void*)identityMatrix, sizeof(float)*16);
 }
 
-float dotf(float *a, float *b, int order)
+float dotf(const float *a, const float *b, int order)
 {
 	float total = 0.0f;
 	while(order--) {
@@ -32,6 +32,20 @@ void multMatrix(const float *m1, const float *m2, float *ret)
 				tempCol[i] = m2[(i*4) + col];
 			}
 			ret[(row*4) + col] = dotf(tempRow, tempCol, 4);
+		}
+	}
+}
+
+void multVectorMatrix(const float *vector, const float *matrix, float *ret)
+{
+	// Vector assumed to be first argument
+	float tempCol[4];
+	for(int row = 0; row < 4; row++) {
+		for(int col = 0; col < 4; col++) {
+			for(int i = 0; i < 4; i++) {
+				tempCol[i] = matrix[(i*4) + col];
+			}
+			ret[(row*4) + col] = dotf(vector, tempCol, 4);
 		}
 	}
 }

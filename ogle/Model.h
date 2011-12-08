@@ -5,6 +5,7 @@ using namespace std;
 
 struct Face {
 	int verts[3];
+	Vector3f normal;
 };
 
 class Model
