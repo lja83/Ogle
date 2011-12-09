@@ -50,7 +50,7 @@ static void render(void)
 	const Face *faces = NULL;
 	int vertIndex;
 
-	bool DRAW_NORMALS = TRUE;
+	bool DRAW_NORMALS = FALSE;
 
 	for (int i = 0; i < modelsCount; i++) {
 		glPushMatrix();
@@ -68,31 +68,10 @@ static void render(void)
 				glVertex3f(verts[vertIndex].x, verts[vertIndex].y, verts[vertIndex].z);
 			}
 			glEnd();
-			//if (DRAW_NORMALS) {
-			//	for(int j = 0; j < 3; j++) {
-			//		draw_normal(verts[faces[face].verts[j]], faces[face].normal);
-			//	}
-			//}
 		}
 		if (DRAW_NORMALS) {
 			for(int j = 0; j < modelsList[i].GetVertexCount(); j++) {
-				//if(j == 900) {
-					draw_normal(verts[j], vertNormals[j]);
-
-				//	int index = j;
-				//	cout << index << endl;
-				//	cout << "   x: " << verts[index].x << endl;
-				//	cout << "   y: " << verts[index].y << endl;
-				//	cout << "   z: " << verts[index].z << endl;
-				//	cout << "   vertex index: " << index << endl;
-				//	cout << endl;
-
-				//	cout << "normal" << endl;
-				//	cout << "   x: " << vertNormals[index].x << endl;
-				//	cout << "   y: " << vertNormals[index].y << endl;
-				//	cout << "   z: " << vertNormals[index].z << endl;
-				//	cout << endl << endl;
-				//}
+				draw_normal(verts[j], vertNormals[j]);
 			}
 		}
 		glPopMatrix();
@@ -103,12 +82,11 @@ static void render(void)
 static void idle(void)
 {
 	rot += 1;
-	rot = fmod(rot, 360);
+	//rot = fmod(rot, 360);
 	float thisRot = rot * (3.1415926 / 180.0f);
-	//modelsList[1].SetRotation3f(0.0f, thisRot, 0.0f);
+	modelsList[0].SetRotation3f(0.0f, thisRot, 0.0f);
 	modelsList[1].SetRotation3f(thisRot, 0.0f, 0.0f);
-	//modelsList[1].SetTranslation3f(1.0f, -1.0f, -5.0f);
-	//cout << rot << endl;
+	modelsList[2].SetRotation3f(0.0f, 0.0f, thisRot);
 	glutPostRedisplay();
 }
 
@@ -138,16 +116,18 @@ int main(int argc, char **argv)
 	glutIdleFunc(&idle);
 	glutReshapeFunc(&reshape);
 
-	modelsCount = 2;
+	modelsCount = 3;
 	modelsList = new Model[modelsCount];
 	//modelsList[0].Load("../bunny.obj");
-	//modelsList[0].Load("../teapot2.obj");
+	modelsList[0].Load("../teapot2.obj");
 	modelsList[1].Load("../teapot2.obj");
+	modelsList[2].Load("../teapot2.obj");
 	//modelsList[1].Load("../dragon.obj");
 
-	//modelsList[0].SetTranslation3f(-4.0f, -2.0f, -20.0f);
-	//modelsList[1].SetTranslation3f(4.0f, -2.0f, -20.0f);
-	modelsList[1].SetTranslation3f(0.0f, 0.0f, -10.0f);
+	modelsList[0].SetTranslation3f(-4.0f, -5.0f, -20.0f);
+	modelsList[1].SetTranslation3f(4.0f, -4.0f, -20.0f);
+	modelsList[2].SetTranslation3f(0.0f, 3.0f, -20.0f);
+	//modelsList[1].SetTranslation3f(0.0f, 0.0f, -10.0f);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);

@@ -49,6 +49,7 @@ void Model::SetTranslation3f(float x, float y, float z)
 void Model::SetRotation3f(float x, float y, float z)
 {
 	float tempMatrix[16];
+	float tempMatrix2[16];
 
 	float xRot[] = {
 		1, 0, 0, 0,
@@ -65,14 +66,15 @@ void Model::SetRotation3f(float x, float y, float z)
 	};
 
 	float zRot[] = {
-		1, cos(z), sin(z), 0,
-		0, -sin(z), cos(z), 0,
+		cos(z), sin(z), 0, 0,
+		-sin(z), cos(z), 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1
 	};
 
 	multMatrix(xRot, yRot, tempMatrix);
-	memcpy(transform, tempMatrix, (sizeof(float) * 12));
+	multMatrix(tempMatrix, zRot, tempMatrix2);
+	memcpy(transform, tempMatrix2, (sizeof(float) * 12));
 
 	//cout.precision(4);
 	//for(int r = 0; r < 4; r++) {
@@ -186,8 +188,12 @@ void Model::Load(const string &filename)
 	}
 
 	int face = 201;
+	int faceVertex = faceList[face].verts[0];
 	for(int i = 0; i < faceCount; i ++) {
-		if(faceList[i].verts[0] == faceList[face].verts[0]) {
+		if((faceList[i].verts[0] == faceVertex) ||
+			(faceList[i].verts[1] == faceVertex) ||
+			(faceList[i].verts[2] == faceVertex)) {
+				cout << i << endl;
 		}
 	}
 

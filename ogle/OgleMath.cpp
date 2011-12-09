@@ -65,7 +65,7 @@ Vector3f cross(const Vector3f &vector1, const Vector3f &vector2)
 {
 	Vector3f result;
 	result.x = (vector1.y*vector2.z) - (vector1.z*vector2.y);
-	result.y = (vector1.x*vector2.z) - (vector1.z*vector2.x);
+	result.y = (vector1.z*vector2.x) - (vector1.x*vector2.z);
 	result.z = (vector1.x*vector2.y) - (vector1.y*vector2.x);
 	return result;
 }
