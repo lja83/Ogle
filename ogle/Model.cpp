@@ -170,18 +170,32 @@ void Model::Load(const string &filename)
 		vertIndex[0] = faceList[i].verts[0];
 		vertIndex[1] = faceList[i].verts[1];
 		vertIndex[2] = faceList[i].verts[2];
+
 		temp = get_normal(vertexList[vertIndex[0]], vertexList[vertIndex[1]], vertexList[vertIndex[2]]);
-		temp = normalize(temp);
-		faceList[i].normal = temp;
 		for (int j = 0; j < 3; j++) {
 			vertexNormalList[vertIndex[j]].x = (temp.x + vertexNormalList[vertIndex[j]].x);
 			vertexNormalList[vertIndex[j]].y = (temp.y + vertexNormalList[vertIndex[j]].y);
 			vertexNormalList[vertIndex[j]].z = (temp.z + vertexNormalList[vertIndex[j]].z);
 		}
+		temp = normalize(temp);
+		faceList[i].normal = temp;
 	}
 	// normalize all vertex normals
 	for (int i = 0; i < vertexCount; i ++) {
 		vertexNormalList[i] = normalize(vertexNormalList[i]);
 	}
+
+	int face = 201;
+	for(int i = 0; i < faceCount; i ++) {
+		if(faceList[i].verts[0] == faceList[face].verts[0]) {
+		}
+	}
+
+	// fix normals(face)
+	//   compare face to adjacent faces
+	//   for each adjacent face
+	//     if normal inverted
+	//       invert adjacent face normal
+	//     fix normals(adjacent face)
 	cout << "   Done" << endl;
 }

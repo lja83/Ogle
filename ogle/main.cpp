@@ -12,7 +12,7 @@ float rot = 0;
 
 static void draw_normal(Vector3f vertex, Vector3f normal)
 {
-	float normalLen = 0.1;
+	float normalLen = .2;
 
 	normal.x *= normalLen;
 	normal.y *= normalLen;
@@ -50,7 +50,7 @@ static void render(void)
 	const Face *faces = NULL;
 	int vertIndex;
 
-	bool DRAW_NORMALS = FALSE;
+	bool DRAW_NORMALS = TRUE;
 
 	for (int i = 0; i < modelsCount; i++) {
 		glPushMatrix();
@@ -63,15 +63,36 @@ static void render(void)
 			glBegin(GL_TRIANGLES);
 			for(int j = 0; j < 3; j ++) {
 				vertIndex = faces[face].verts[j];
-				//glNormal3f(vertNormals[vertIndex].x, vertNormals[vertIndex].y, vertNormals[vertIndex].z);
-				glNormal3f(faces[face].normal.x, faces[face].normal.y, faces[face].normal.z);
+				glNormal3f(vertNormals[vertIndex].x, vertNormals[vertIndex].y, vertNormals[vertIndex].z);
+				//glNormal3f(faces[face].normal.x, faces[face].normal.y, faces[face].normal.z);
 				glVertex3f(verts[vertIndex].x, verts[vertIndex].y, verts[vertIndex].z);
 			}
 			glEnd();
+			//if (DRAW_NORMALS) {
+			//	for(int j = 0; j < 3; j++) {
+			//		draw_normal(verts[faces[face].verts[j]], faces[face].normal);
+			//	}
+			//}
 		}
 		if (DRAW_NORMALS) {
 			for(int j = 0; j < modelsList[i].GetVertexCount(); j++) {
-				draw_normal(verts[j], vertNormals[j]);
+				//if(j == 900) {
+					draw_normal(verts[j], vertNormals[j]);
+
+				//	int index = j;
+				//	cout << index << endl;
+				//	cout << "   x: " << verts[index].x << endl;
+				//	cout << "   y: " << verts[index].y << endl;
+				//	cout << "   z: " << verts[index].z << endl;
+				//	cout << "   vertex index: " << index << endl;
+				//	cout << endl;
+
+				//	cout << "normal" << endl;
+				//	cout << "   x: " << vertNormals[index].x << endl;
+				//	cout << "   y: " << vertNormals[index].y << endl;
+				//	cout << "   z: " << vertNormals[index].z << endl;
+				//	cout << endl << endl;
+				//}
 			}
 		}
 		glPopMatrix();
@@ -86,6 +107,7 @@ static void idle(void)
 	float thisRot = rot * (3.1415926 / 180.0f);
 	//modelsList[1].SetRotation3f(0.0f, thisRot, 0.0f);
 	modelsList[1].SetRotation3f(thisRot, 0.0f, 0.0f);
+	//modelsList[1].SetTranslation3f(1.0f, -1.0f, -5.0f);
 	//cout << rot << endl;
 	glutPostRedisplay();
 }
