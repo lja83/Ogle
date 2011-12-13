@@ -4,11 +4,19 @@
 #include <iostream>
 #include "Model.h"
 #include "OgleMath.h"
+#include "OgleMatrix.h"
 using namespace std;
 
 int modelsCount = 0;
 Model *modelsList;
 float rot = 0;
+
+float cameraMatrix[16] = {
+	1, 0, 0, 0,
+	0, 1, 0, 0,
+	0, 0, 1, 0,
+	0, 0, 0, 1
+};
 
 static void draw_normal(Vector3f vertex, Vector3f normal)
 {
@@ -42,15 +50,16 @@ static void render(void)
 	float light_pos[4] = {0, 0, 1, 0};
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 
-	//glTranslatef(0.0f, 0.0f, -20.0f);
-	//glRotatef(rot, 1.0f, 0.0f, 0.0f);
-
 	const Vector3f *verts = NULL;
 	const Vector3f *vertNormals = NULL;
 	const Face *faces = NULL;
 	int vertIndex;
+	//float tempMatrix[16];
 
 	bool DRAW_NORMALS = FALSE;
+
+	//multScalarMatrix(-1.0f, cameraMatrix, tempMatrix);
+	//glMultMatrixf(tempMatrix);
 
 	for (int i = 0; i < modelsCount; i++) {
 		glPushMatrix();
@@ -133,6 +142,20 @@ int main(int argc, char **argv)
 	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
+
+	float tempMatrix[] = {
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0, 
+		0, 0, 0, 1
+	};
+	OgleMatrix test(4, 4);
+	OgleMatrix test2(4, 4);
+	OgleMatrix temp2(4, 4);
+	test.SetMatrix(tempMatrix);
+	test2.SetMatrix(tempMatrix);
+	temp2 = test.MultMatrix(test2);
+	cout << temp2.GetRawMatrix()[0] << endl;
 
 	glutMainLoop();
 	return 0;

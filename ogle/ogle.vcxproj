@@ -80,10 +80,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="OgleMath.cpp" />
+    <ClCompile Include="OgleMatrix.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model.h" />
     <ClInclude Include="OgleMath.h" />
+    <ClInclude Include="OgleMatrix.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

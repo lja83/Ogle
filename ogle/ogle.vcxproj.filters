@@ -24,12 +24,18 @@
     <ClCompile Include="OgleMath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OgleMatrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OgleMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OgleMatrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

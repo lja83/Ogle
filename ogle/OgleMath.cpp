@@ -36,6 +36,15 @@ void multMatrix(const float *m1, const float *m2, float *ret)
 	}
 }
 
+void multScalarMatrix(const float &scalar, const float *matrix, float *ret)
+{
+	// Matrix assumed to be 4x4
+	for(int i=0; i < 16; i++) {
+		ret[i] = matrix[i] * scalar;
+		std::cout << i << ' ' << ret[i] << std::endl;
+	}
+}
+
 void multVectorMatrix(const float *vector, const float *matrix, float *ret)
 {
 	// Vector assumed to be first argument
