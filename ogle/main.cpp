@@ -64,7 +64,7 @@ static void render(void)
 	for (int i = 0; i < modelsCount; i++) {
 		glPushMatrix();
 		// Set model's matrix
-		glMultMatrixf(modelsList[i].GetTransform());
+		glMultMatrixf(modelsList[i].GetTransform().GetRawMatrix());
 		verts = modelsList[i].GetVertexList();
 		vertNormals = modelsList[i].GetVertexNormalList();
 		faces = modelsList[i].GetFaceList();
@@ -143,19 +143,8 @@ int main(int argc, char **argv)
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 
-	float tempMatrix[] = {
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0, 
-		0, 0, 0, 1
-	};
-	OgleMatrix test(4, 4);
-	OgleMatrix test2(4, 4);
-	OgleMatrix temp2(4, 4);
-	test.SetMatrix(tempMatrix);
-	test2.SetMatrix(tempMatrix);
-	temp2 = test.MultMatrix(test2);
-	cout << temp2.GetRawMatrix()[0] << endl;
+	OgleMatrix a(4, 4);
+	a.SetIdentity();
 
 	glutMainLoop();
 	return 0;

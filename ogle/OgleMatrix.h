@@ -6,6 +6,7 @@ private:
 	int columns;
 	float *matrix;
 public:
+	OgleMatrix(void);
 	OgleMatrix(const OgleMatrix &copyMe);
 	OgleMatrix(int x, int y);
 	~OgleMatrix(void);
@@ -17,6 +18,7 @@ public:
 	const float *GetRawMatrix(void) { return matrix; };
 	void Set(int r, int c, float newValue) {matrix[(r*columns) + c] = newValue; }
 
+	void SetIdentity(void);
 	void SetMatrix(const float *newValues);
 	OgleMatrix MultMatrix(const OgleMatrix &rightTerm);
 };

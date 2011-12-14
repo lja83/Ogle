@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include "OgleMath.h"
+#include "OgleMatrix.h"
 using namespace std;
 
 Model::Model(void)
@@ -16,8 +17,7 @@ Model::Model(void)
 	faceCount = 0;
 	faceList = NULL;
 
-	transform = new float[16];
-	setIdentity(transform);
+	transform.SetIdentity();
 }
 
 Model::~Model(void)
@@ -36,45 +36,57 @@ Model::~Model(void)
 
 void Model::SetTransform(const float new_transform[16])
 {
-	memcpy(transform, new_transform, (sizeof(float) * 16));
+	transform.SetMatrix(new_transform);
 }
 
 void Model::SetTranslation3f(float x, float y, float z)
 {
-	transform[12 + 0] = x;
-	transform[12 + 1] = y;
-	transform[12 + 2] = z;
+	transform.Set(3, 0, x);
+	transform.Set(3, 1, y);
+	transform.Set(3, 2, z);
 }
 
 void Model::SetRotation3f(float x, float y, float z)
 {
-	float tempMatrix[16];
-	float tempMatrix2[16];
+	OgleMatrix tempMatrix(4, 4);
+	OgleMatrix tempMatrix2(4, 4);
 
-	float xRot[] = {
+	float xMat[] = {
 		1, 0, 0, 0,
 		0, cos(x), sin(x), 0,
 		0, -sin(x), cos(x), 0,
 		0, 0, 0, 1
 	};
+	OgleMatrix xRot(4, 4);
+	xRot.SetMatrix(xMat);
 
-	float yRot[] = {
+	float yMat[] = {
 		cos(y), 0, -sin(y), 0,
 		0, 1, 0, 0,
 		sin(y), 0, cos(y), 0,
 		0, 0, 0, 1
 	};
+	OgleMatrix yRot(4, 4);
+	yRot.SetMatrix(yMat);
 
-	float zRot[] = {
+	float zMat[] = {
 		cos(z), sin(z), 0, 0,
 		-sin(z), cos(z), 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1
 	};
+	OgleMatrix zRot(4, 4);
+	zRot.SetMatrix(zMat);
 
-	multMatrix(xRot, yRot, tempMatrix);
-	multMatrix(tempMatrix, zRot, tempMatrix2);
-	memcpy(transform, tempMatrix2, (sizeof(float) * 12));
+	tempMatrix = xRot.MultMatrix(yRot);
+	tempMatrix = tempMatrix.MultMatrix(zRot);
+
+	// Don't change translation when rotation changes.
+	// Need a better way to do this...
+	tempMatrix.Set(3, 0, transform.GetRawMatrix()[12 + 0]);
+	tempMatrix.Set(3, 1, transform.GetRawMatrix()[12 + 1]);
+	tempMatrix.Set(3, 2, transform.GetRawMatrix()[12 + 2]);
+	transform = tempMatrix;
 
 	//cout.precision(4);
 	//for(int r = 0; r < 4; r++) {

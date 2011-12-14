@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "OgleMath.h"
+#include "OgleMatrix.h"
 using namespace std;
 
 struct Face {
@@ -18,7 +19,7 @@ private:
 	int faceCount;
 	Face *faceList;
 
-	float *transform;
+	OgleMatrix transform;
 public:
 	Model(void);
 	~Model(void);
@@ -28,7 +29,7 @@ public:
 	const Vector3f *GetVertexList(void) { return vertexList; };
 	const Vector3f *GetVertexNormalList(void) { return vertexNormalList; };
 	const Face *GetFaceList(void) { return faceList; };
-	const float *GetTransform(void) { return transform; };
+	OgleMatrix GetTransform(void) { return transform; };
 
 	void SetTransform(const float new_transform[16]);
 	void SetTranslation3f(float x, float y, float z);
