@@ -50,9 +50,9 @@ static void render(void)
 	float light_pos[4] = {0, 0, 1, 0};
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 
-	const Vector3f *verts = NULL;
+	const Vertex *verts = NULL;
 	const Vector3f *vertNormals = NULL;
-	const Face *faces = NULL;
+	const int *faces = NULL;
 	int vertIndex;
 	//float tempMatrix[16];
 
@@ -65,24 +65,18 @@ static void render(void)
 		glPushMatrix();
 		// Set model's matrix
 		glMultMatrixf(modelsList[i].GetTransform().GetRawMatrix());
+
 		verts = modelsList[i].GetVertexList();
-		vertNormals = modelsList[i].GetVertexNormalList();
 		faces = modelsList[i].GetFaceList();
-		for(int face = 0; face < modelsList[i].GetFaceCount(); face ++) {
-			glBegin(GL_TRIANGLES);
-			for(int j = 0; j < 3; j ++) {
-				vertIndex = faces[face].verts[j];
-				glNormal3f(vertNormals[vertIndex].x, vertNormals[vertIndex].y, vertNormals[vertIndex].z);
-				//glNormal3f(faces[face].normal.x, faces[face].normal.y, faces[face].normal.z);
-				glVertex3f(verts[vertIndex].x, verts[vertIndex].y, verts[vertIndex].z);
-			}
-			glEnd();
-		}
-		if (DRAW_NORMALS) {
-			for(int j = 0; j < modelsList[i].GetVertexCount(); j++) {
-				draw_normal(verts[j], vertNormals[j]);
-			}
-		}
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glVertexPointer(3, GL_FLOAT, sizeof(Vertex), &verts[0].vert);
+		glNormalPointer(GL_FLOAT, sizeof(Vertex), &verts[0].normal);
+		glDrawElements(GL_TRIANGLES, modelsList[i].GetFaceCount() * 3, GL_UNSIGNED_INT, faces);
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+
 		glPopMatrix();
 	}
 	glutSwapBuffers();
@@ -129,9 +123,9 @@ int main(int argc, char **argv)
 	modelsList = new Model[modelsCount];
 	//modelsList[0].Load("../bunny.obj");
 	modelsList[0].Load("../teapot2.obj");
-	modelsList[1].Load("../teapot2.obj");
+	//modelsList[1].Load("../teapot2.obj");
 	modelsList[2].Load("../teapot2.obj");
-	//modelsList[1].Load("../dragon.obj");
+	modelsList[1].Load("../dragon.obj");
 
 	modelsList[0].SetTranslation3f(-4.0f, -5.0f, -20.0f);
 	modelsList[1].SetTranslation3f(4.0f, -4.0f, -20.0f);

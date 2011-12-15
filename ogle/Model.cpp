@@ -114,7 +114,7 @@ void Model::Load(const string &filename)
 	int faceIndex = 0;
 
 	Vector3f temp;
-	Face tempFace;
+	int tempFace[3];
 
 	file.open(filename, ios::in);
 	// Run through file once to figure out how many verts and faces exist
@@ -139,9 +139,8 @@ void Model::Load(const string &filename)
 	cout << "   Attempting to load " << faceCount << " faces." << endl;
 
 	// Allocate memory for vertices and faces
-	vertexList = new Vector3f[vertexCount];
-	vertexNormalList = new Vector3f[vertexCount];
-	faceList = new Face[faceCount];
+	vertexList = new Vertex[vertexCount];
+	faceList = new int[faceCount * 3];
 
 	// Run through file again to load vertex and face data
 	while(file) {
@@ -151,14 +150,14 @@ void Model::Load(const string &filename)
 			streamLine >> buf;
 			if (buf == "v") {
 				streamLine >> temp.x >> temp.y >> temp.z;
-				vertexList[vertexIndex] = temp;
+				vertexList[vertexIndex].vert = temp;
 				vertexIndex ++;
 			}else if (buf == "f") {
-				streamLine >> tempFace.verts[0] >> tempFace.verts[1] >> tempFace.verts[2];
-				tempFace.verts[0] --;
-				tempFace.verts[1] --;
-				tempFace.verts[2] --;
-				faceList[faceIndex] = tempFace;
+				streamLine >> tempFace[0] >> tempFace[1] >> tempFace[2];
+				tempFace[0] --;
+				tempFace[1] --;
+				tempFace[2] --;
+				memcpy(faceList+(faceIndex*3), tempFace, (sizeof(int)*3));
 				faceIndex ++;
 			}
 		}
@@ -173,7 +172,7 @@ void Model::Load(const string &filename)
 	temp.y = 0;
 	temp.z = 0;
 	for (int i = 0; i < vertexCount; i ++) {
-		vertexNormalList[i] = temp;
+		vertexList[i].normal = temp;
 	}
 
 	int vertIndex[3];
@@ -181,39 +180,23 @@ void Model::Load(const string &filename)
 	// For each vertex on each face, calculate the vertex's normal based on the new face.
 	// If a previous normal has been calculated, average this one with the old one without normalizing.
 	for (int i = 0; i < faceCount; i ++) {
-		vertIndex[0] = faceList[i].verts[0];
-		vertIndex[1] = faceList[i].verts[1];
-		vertIndex[2] = faceList[i].verts[2];
+		vertIndex[0] = faceList[i*3];
+		vertIndex[1] = faceList[(i*3) + 1];
+		vertIndex[2] = faceList[(i*3) + 2];
 
-		temp = get_normal(vertexList[vertIndex[0]], vertexList[vertIndex[1]], vertexList[vertIndex[2]]);
+		temp = get_normal(vertexList[vertIndex[0]].vert, vertexList[vertIndex[1]].vert, vertexList[vertIndex[2]].vert);
 		for (int j = 0; j < 3; j++) {
-			vertexNormalList[vertIndex[j]].x = (temp.x + vertexNormalList[vertIndex[j]].x);
-			vertexNormalList[vertIndex[j]].y = (temp.y + vertexNormalList[vertIndex[j]].y);
-			vertexNormalList[vertIndex[j]].z = (temp.z + vertexNormalList[vertIndex[j]].z);
+			vertexList[vertIndex[j]].normal.x = (temp.x + vertexList[vertIndex[j]].normal.x);
+			vertexList[vertIndex[j]].normal.y = (temp.y + vertexList[vertIndex[j]].normal.y);
+			vertexList[vertIndex[j]].normal.z = (temp.z + vertexList[vertIndex[j]].normal.z);
 		}
-		temp = normalize(temp);
-		faceList[i].normal = temp;
+		//temp = normalize(temp);
+		//faceList[i].normal = temp;
 	}
 	// normalize all vertex normals
 	for (int i = 0; i < vertexCount; i ++) {
-		vertexNormalList[i] = normalize(vertexNormalList[i]);
+		vertexList[i].normal = normalize(vertexList[i].normal);
 	}
 
-	int face = 201;
-	int faceVertex = faceList[face].verts[0];
-	for(int i = 0; i < faceCount; i ++) {
-		if((faceList[i].verts[0] == faceVertex) ||
-			(faceList[i].verts[1] == faceVertex) ||
-			(faceList[i].verts[2] == faceVertex)) {
-				cout << i << endl;
-		}
-	}
-
-	// fix normals(face)
-	//   compare face to adjacent faces
-	//   for each adjacent face
-	//     if normal inverted
-	//       invert adjacent face normal
-	//     fix normals(adjacent face)
 	cout << "   Done" << endl;
 }
